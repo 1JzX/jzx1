@@ -1,0 +1,2236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>人员管理后台</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+
+    background: #f5f6f8;
+    color: #222;
+}
+
+
+/* ================================
+   顶部
+================================ */
+
+.header {
+    height: 70px;
+
+    padding: 0 25px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 20;
+}
+
+.title {
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.admin-status {
+    font-size: 13px;
+    color: #2563eb;
+
+    margin-right: 12px;
+}
+
+
+/* ================================
+   增加按钮
+================================ */
+
+.add-button {
+    border: none;
+
+    background: #222;
+    color: white;
+
+    border-radius: 9px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+.add-button:hover {
+    opacity: 0.85;
+}
+
+
+/* ================================
+   主区域
+================================ */
+
+.main {
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 25px;
+}
+
+
+/* ================================
+   人员网格
+================================ */
+
+.people-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(150px, 1fr));
+
+    gap: 16px;
+}
+
+
+/* ================================
+   人物小卡片
+================================ */
+
+.person-card {
+
+    aspect-ratio: 1 / 1;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    position: relative;
+
+    transition: 0.18s;
+}
+
+.person-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.08);
+}
+
+
+.person-photo {
+
+    position: absolute;
+
+    inset: 0;
+
+    background: #e9ebee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #999;
+
+    font-size: 13px;
+}
+
+
+.person-photo img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* 名称覆盖在图片下面 */
+
+.person-name {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 28px 10px 10px;
+
+    color: white;
+
+    font-weight: 600;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(0,0,0,.72)
+        );
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ================================
+   空列表
+================================ */
+
+.empty {
+
+    padding: 70px 20px;
+
+    text-align: center;
+
+    color: #888;
+
+    background: white;
+
+    border-radius: 14px;
+
+    border: 1px dashed #d1d5db;
+}
+
+
+/* ================================
+   页面
+================================ */
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+
+/* ================================
+   返回按钮
+================================ */
+
+.back {
+
+    border: none;
+
+    background: transparent;
+
+    padding: 8px 0;
+
+    color: #666;
+
+    cursor: pointer;
+
+    margin-bottom: 15px;
+}
+
+
+/* ================================
+   人物详情
+================================ */
+
+.detail {
+
+    background: white;
+
+    border-radius: 15px;
+
+    border: 1px solid #e5e7eb;
+
+    padding: 25px;
+
+    position: relative;
+
+    display: flex;
+
+    gap: 25px;
+}
+
+
+.detail-photo {
+
+    width: 260px;
+    height: 320px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: #eef0f2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #999;
+
+    overflow: hidden;
+}
+
+
+.detail-photo img {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.detail-content {
+
+    flex: 1;
+}
+
+
+.detail-name {
+
+    font-size: 29px;
+
+    font-weight: 700;
+
+    margin-bottom: 18px;
+}
+
+
+.detail-description {
+
+    white-space: pre-wrap;
+
+    line-height: 1.8;
+
+    color: #555;
+}
+
+
+/* ================================
+   积分
+================================ */
+
+.score-box {
+
+    margin-top: 25px;
+
+    padding: 16px;
+
+    background: #f5f6f8;
+
+    border-radius: 11px;
+
+    width: fit-content;
+}
+
+
+.score-label {
+
+    font-size: 13px;
+
+    color: #777;
+
+    margin-bottom: 5px;
+}
+
+
+.score {
+
+    font-size: 28px;
+
+    font-weight: 700;
+}
+
+
+/* ================================
+   音频
+================================ */
+
+.audio-box {
+
+    margin-top: 22px;
+}
+
+
+.audio-box audio {
+
+    width: min(500px, 100%);
+}
+
+
+/* ================================
+   设置按钮
+================================ */
+
+.settings-button {
+
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f0f1f3;
+
+    cursor: pointer;
+
+    font-size: 19px;
+}
+
+
+/* ================================
+   全屏新增弹窗
+================================ */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.48);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 100;
+}
+
+.modal.active {
+    display: flex;
+}
+
+
+.modal-window {
+
+    width: min(1100px, calc(100% - 30px));
+
+    height: min(750px, calc(100% - 30px));
+
+    background: white;
+
+    border-radius: 17px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.modal-top {
+
+    padding: 20px 25px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.modal-top label {
+
+    white-space: nowrap;
+
+    font-weight: 600;
+}
+
+
+.modal-top input {
+
+    flex: 1;
+
+    border: 1px solid #d7dbe0;
+
+    border-radius: 9px;
+
+    padding: 11px;
+
+    outline: none;
+}
+
+
+.modal-body {
+
+    flex: 1;
+
+    display: flex;
+
+    gap: 20px;
+
+    padding: 25px;
+
+    overflow: auto;
+}
+
+
+.description {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.description textarea {
+
+    flex: 1;
+
+    min-height: 300px;
+
+    resize: none;
+
+    border: 1px solid #d7dbe0;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    outline: none;
+
+    line-height: 1.7;
+}
+
+
+.upload-placeholder {
+
+    width: 300px;
+
+    min-height: 300px;
+
+    border: 1px dashed #cbd0d6;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: #999;
+}
+
+
+.modal-bottom {
+
+    border-top: 1px solid #e5e7eb;
+
+    padding: 16px 25px;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+
+/* ================================
+   普通按钮
+================================ */
+
+.button {
+
+    border: none;
+
+    border-radius: 9px;
+
+    padding: 10px 17px;
+
+    cursor: pointer;
+}
+
+
+.cancel {
+
+    background: #eef0f2;
+}
+
+
+.confirm {
+
+    background: #222;
+
+    color: white;
+}
+
+
+/* ================================
+   设置页面
+================================ */
+
+.settings-box {
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 15px;
+
+    padding: 25px;
+}
+
+
+.settings-title {
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+    margin-bottom: 25px;
+}
+
+
+.field {
+
+    margin-bottom: 22px;
+}
+
+
+.field label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-weight: 600;
+}
+
+
+.field input,
+.field textarea {
+
+    width: 100%;
+
+    border: 1px solid #d7dbe0;
+
+    border-radius: 9px;
+
+    padding: 12px;
+
+    outline: none;
+}
+
+
+.field textarea {
+
+    min-height: 220px;
+
+    resize: vertical;
+
+    line-height: 1.7;
+}
+
+
+.audio-input {
+
+    margin-top: 10px;
+}
+
+
+.save {
+
+    background: #222;
+
+    color: white;
+}
+
+
+/* ================================
+   删除区域
+================================ */
+
+.danger {
+
+    margin-top: 80px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+
+.delete {
+
+    background: #dc2626;
+
+    color: white;
+}
+
+
+/* ================================
+   小弹窗
+================================ */
+
+.small-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.4);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 200;
+}
+
+
+.small-modal.active {
+
+    display: flex;
+}
+
+
+.small-box {
+
+    width: min(400px, calc(100% - 30px));
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 25px;
+}
+
+
+.small-title {
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+
+.small-text {
+
+    color: #666;
+
+    margin-bottom: 23px;
+
+    line-height: 1.6;
+}
+
+
+.small-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+
+/* ================================
+   蓝色权限提示
+================================ */
+
+.permission-box {
+
+    border-top: 5px solid #2563eb;
+}
+
+
+.permission-title {
+
+    color: #2563eb;
+
+    font-weight: 700;
+
+    font-size: 19px;
+
+    margin-bottom: 10px;
+}
+
+
+/* ================================
+   管理员密码
+================================ */
+
+.password-input {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #d7dbe0;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    margin-bottom: 18px;
+}
+
+
+/* ================================
+   隐藏管理员触发区域
+================================ */
+
+.secret-zone {
+
+    position: fixed;
+
+    width: 80px;
+    height: 80px;
+
+    z-index: 500;
+
+    pointer-events: auto;
+}
+
+
+/* 右下角 */
+
+.secret-right {
+
+    right: 0;
+    bottom: 0;
+}
+
+
+/* 左下角 */
+
+.secret-left {
+
+    left: 0;
+    bottom: 0;
+}
+
+
+/* ================================
+   手机适配
+================================ */
+
+@media (max-width: 700px) {
+
+    .main {
+        padding: 15px;
+    }
+
+    .people-grid {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 9px;
+    }
+
+    .detail {
+
+        flex-direction: column;
+    }
+
+    .detail-photo {
+
+        width: 100%;
+        height: 300px;
+    }
+
+    .modal-window {
+
+        width: 100%;
+        height: 100%;
+
+        border-radius: 0;
+    }
+
+    .modal-body {
+
+        flex-direction: column;
+    }
+
+    .upload-placeholder {
+
+        width: 100%;
+        min-height: 170px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ======================================
+     顶部
+====================================== -->
+
+<header class="header">
+
+    <div class="title">
+        人员管理
+    </div>
+
+    <div style="display:flex;align-items:center;">
+
+        <span
+            id="adminStatus"
+            class="admin-status"
+        ></span>
+
+        <button
+            id="addButton"
+            class="add-button"
+            onclick="requestAdminForAction(openAddModal)"
+        >
+            ＋ 增加人员
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="main">
+
+
+<!-- ======================================
+     人员列表
+====================================== -->
+
+<section
+    id="listPage"
+    class="page active"
+>
+
+    <div
+        id="peopleGrid"
+        class="people-grid"
+    ></div>
+
+</section>
+
+
+<!-- ======================================
+     人员详情
+====================================== -->
+
+<section
+    id="detailPage"
+    class="page"
+>
+
+    <button
+        class="back"
+        onclick="showList()"
+    >
+        ← 返回
+    </button>
+
+    <div id="detailContent"></div>
+
+</section>
+
+
+<!-- ======================================
+     设置页面
+====================================== -->
+
+<section
+    id="settingsPage"
+    class="page"
+>
+
+    <button
+        class="back"
+        onclick="showDetail()"
+    >
+        ← 返回人物
+    </button>
+
+    <div class="settings-box">
+
+        <div class="settings-title">
+            人员设置
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                人员名称
+            </label>
+
+            <input
+                id="settingsName"
+                type="text"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                人员简介
+            </label>
+
+            <textarea
+                id="settingsDescription"
+            ></textarea>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                人员积分
+            </label>
+
+            <input
+                id="settingsScore"
+                type="number"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                人物音频
+            </label>
+
+            <input
+                id="settingsAudio"
+                class="audio-input"
+                type="file"
+                accept="audio/*"
+            >
+
+        </div>
+
+
+        <button
+            class="button save"
+            onclick="saveSettings()"
+        >
+            保存修改
+        </button>
+
+
+        <div class="danger">
+
+            <p>
+                删除人员
+            </p>
+
+            <button
+                class="button delete"
+                onclick="requestAdminForAction(openDeleteConfirm)"
+            >
+                删除此人员
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- ======================================
+     新增人员
+====================================== -->
+
+<div
+    id="addModal"
+    class="modal"
+>
+
+    <div class="modal-window">
+
+
+        <div class="modal-top">
+
+            <label>
+                在此填写名称：
+            </label>
+
+            <input
+                id="newName"
+                type="text"
+                placeholder="请输入人员名称"
+            >
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="description">
+
+                <textarea
+                    id="newDescription"
+                    placeholder="在此填写人员简介……"
+                ></textarea>
+
+            </div>
+
+
+            <div class="upload-placeholder">
+
+                <div>
+
+                    <div style="font-size:30px;">
+                        ＋
+                    </div>
+
+                    <div>
+                        图片上传区域
+                    </div>
+
+                    <small>
+                        图片功能后续接入
+                    </small>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-bottom">
+
+            <button
+                class="button cancel"
+                onclick="closeAddModal()"
+            >
+                取消
+            </button>
+
+            <button
+                class="button confirm"
+                onclick="createPerson()"
+            >
+                确定
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     权限提示
+====================================== -->
+
+<div
+    id="permissionModal"
+    class="small-modal"
+>
+
+    <div class="small-box permission-box">
+
+        <div class="permission-title">
+            没有管理员权限
+        </div>
+
+        <div class="small-text">
+            禁止查看此设置。
+        </div>
+
+        <div class="small-actions">
+
+            <button
+                class="button confirm"
+                onclick="closePermissionModal()"
+            >
+                确定
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     管理员密码
+====================================== -->
+
+<div
+    id="passwordModal"
+    class="small-modal"
+>
+
+    <div class="small-box">
+
+        <div class="small-title">
+            开启管理员模式
+        </div>
+
+        <div class="small-text">
+            请输入管理员密码。
+        </div>
+
+        <input
+            id="passwordInput"
+            class="password-input"
+            type="password"
+            placeholder="管理员密码"
+        >
+
+        <div class="small-actions">
+
+            <button
+                class="button cancel"
+                onclick="closePasswordModal()"
+            >
+                取消
+            </button>
+
+            <button
+                class="button confirm"
+                onclick="loginAdmin()"
+            >
+                确定
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     删除确认
+====================================== -->
+
+<div
+    id="deleteModal"
+    class="small-modal"
+>
+
+    <div class="small-box">
+
+        <div class="small-title">
+            确定删除此人员？
+        </div>
+
+        <div class="small-text">
+            删除后这个人员将从当前系统中移除。
+        </div>
+
+        <div class="small-actions">
+
+            <button
+                class="button cancel"
+                onclick="closeDeleteConfirm()"
+            >
+                取消
+            </button>
+
+            <button
+                class="button delete"
+                onclick="deletePerson()"
+            >
+                确定删除
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     隐藏管理员入口
+====================================== -->
+
+<div
+    class="secret-zone secret-right"
+    id="secretRight"
+></div>
+
+<div
+    class="secret-zone secret-left"
+    id="secretLeft"
+></div>
+
+
+<script>
+
+/* =====================================================
+   数据
+===================================================== */
+
+let people = JSON.parse(
+    localStorage.getItem("peopleData") || "[]"
+);
+
+
+/* =====================================================
+   管理员
+===================================================== */
+
+/*
+   注意：
+   这里的密码只是前端模拟用。
+
+   真正的网站如果需要安全权限，
+   密码必须放到服务器端验证。
+
+   目前为了让你直接测试，
+   默认密码设置成：
+
+   admin123
+*/
+
+const ADMIN_PASSWORD = "admin123";
+
+let isAdmin = false;
+
+let currentPersonId = null;
+
+let pendingAdminAction = null;
+
+
+/* =====================================================
+   DOM
+===================================================== */
+
+const peopleGrid =
+    document.getElementById("peopleGrid");
+
+const listPage =
+    document.getElementById("listPage");
+
+const detailPage =
+    document.getElementById("detailPage");
+
+const settingsPage =
+    document.getElementById("settingsPage");
+
+const detailContent =
+    document.getElementById("detailContent");
+
+
+/* =====================================================
+   初始化
+===================================================== */
+
+renderPeople();
+
+updateAdminStatus();
+
+
+/* =====================================================
+   保存数据
+===================================================== */
+
+function saveData() {
+
+    localStorage.setItem(
+        "peopleData",
+        JSON.stringify(people)
+    );
+
+}
+
+
+/* =====================================================
+   HTML 转义
+===================================================== */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =====================================================
+   渲染人员
+===================================================== */
+
+function renderPeople() {
+
+    peopleGrid.innerHTML = "";
+
+
+    if (people.length === 0) {
+
+        peopleGrid.innerHTML = `
+            <div class="empty">
+                暂时还没有人员。
+                <br><br>
+                ${isAdmin
+                    ? "点击右上角「＋ 增加人员」创建人员。"
+                    : "当前没有可查看的人员。"}
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    people.forEach(person => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "person-card";
+
+        card.onclick = () =>
+            openPerson(person.id);
+
+
+        let photo = `
+            <span>
+                暂无图片
+            </span>
+        `;
+
+
+        if (person.image) {
+
+            photo = `
+                <img
+                    src="${person.image}"
+                    alt=""
+                >
+            `;
+
+        }
+
+
+        card.innerHTML = `
+
+            <div class="person-photo">
+                ${photo}
+            </div>
+
+            <div class="person-name">
+                ${escapeHTML(person.name)}
+            </div>
+
+        `;
+
+
+        peopleGrid.appendChild(card);
+
+    });
+
+}
+
+
+/* =====================================================
+   打开人物
+===================================================== */
+
+function openPerson(id) {
+
+    currentPersonId = id;
+
+
+    const person =
+        people.find(p => p.id === id);
+
+
+    if (!person) return;
+
+
+    listPage.classList.remove("active");
+
+    settingsPage.classList.remove("active");
+
+    detailPage.classList.add("active");
+
+
+    let photo = `
+        <span>
+            暂无图片
+        </span>
+    `;
+
+
+    if (person.image) {
+
+        photo = `
+            <img
+                src="${person.image}"
+                alt=""
+            >
+        `;
+
+    }
+
+
+    let audio = "";
+
+    if (person.audio) {
+
+        audio = `
+            <div class="audio-box">
+
+                <audio
+                    controls
+                    src="${person.audio}"
+                ></audio>
+
+            </div>
+        `;
+
+    }
+
+
+    detailContent.innerHTML = `
+
+        <div class="detail">
+
+            <button
+                class="settings-button"
+                onclick="openSettings()"
+                title="人员设置"
+            >
+                ⚙️
+            </button>
+
+
+            <div class="detail-photo">
+                ${photo}
+            </div>
+
+
+            <div class="detail-content">
+
+                <div class="detail-name">
+                    ${escapeHTML(person.name)}
+                </div>
+
+                <div class="detail-description">
+                    ${escapeHTML(person.description)}
+                </div>
+
+
+                <div class="score-box">
+
+                    <div class="score-label">
+                        积分
+                    </div>
+
+                    <div class="score">
+                        ${Number(person.score) || 0}
+                    </div>
+
+                </div>
+
+
+                ${audio}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   返回列表
+===================================================== */
+
+function showList() {
+
+    detailPage.classList.remove("active");
+
+    settingsPage.classList.remove("active");
+
+    listPage.classList.add("active");
+
+    renderPeople();
+
+}
+
+
+/* =====================================================
+   请求管理员权限
+===================================================== */
+
+function requestAdminForAction(action) {
+
+    if (isAdmin) {
+
+        action();
+
+        return;
+
+    }
+
+
+    /*
+       如果没有管理员，
+       先显示蓝色权限提示。
+    */
+
+    pendingAdminAction = action;
+
+    openPermissionModal();
+
+}
+
+
+/* =====================================================
+   权限提示
+===================================================== */
+
+function openPermissionModal() {
+
+    document
+        .getElementById("permissionModal")
+        .classList.add("active");
+
+}
+
+
+function closePermissionModal() {
+
+    document
+        .getElementById("permissionModal")
+        .classList.remove("active");
+
+}
+
+
+/* =====================================================
+   设置
+===================================================== */
+
+function openSettings() {
+
+    if (!isAdmin) {
+
+        openPermissionModal();
+
+        return;
+
+    }
+
+
+    const person =
+        people.find(p => p.id === currentPersonId);
+
+
+    if (!person) return;
+
+
+    document.getElementById(
+        "settingsName"
+    ).value = person.name;
+
+
+    document.getElementById(
+        "settingsDescription"
+    ).value = person.description;
+
+
+    document.getElementById(
+        "settingsScore"
+    ).value = person.score || 0;
+
+
+    document.getElementById(
+        "settingsAudio"
+    ).value = "";
+
+
+    detailPage.classList.remove("active");
+
+    settingsPage.classList.add("active");
+
+}
+
+
+/* =====================================================
+   保存设置
+===================================================== */
+
+function saveSettings() {
+
+    if (!isAdmin) {
+
+        openPermissionModal();
+
+        return;
+
+    }
+
+
+    const person =
+        people.find(p => p.id === currentPersonId);
+
+
+    if (!person) return;
+
+
+    const name =
+        document
+            .getElementById("settingsName")
+            .value
+            .trim();
+
+
+    const description =
+        document
+            .getElementById("settingsDescription")
+            .value
+            .trim();
+
+
+    const score =
+        Number(
+            document
+                .getElementById("settingsScore")
+                .value
+        ) || 0;
+
+
+    if (!name) {
+
+        alert("人员名称不能为空。");
+
+        return;
+
+    }
+
+
+    person.name = name;
+
+    person.description = description;
+
+    person.score = score;
+
+
+    /*
+       音频文件后面可以直接在这里
+       接入 IndexedDB 或服务器上传。
+
+       当前先不永久处理文件。
+    */
+
+    const audioFile =
+        document
+            .getElementById("settingsAudio")
+            .files[0];
+
+
+    if (audioFile) {
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function(event) {
+
+            person.audio =
+                event.target.result;
+
+            saveData();
+
+            alert("修改已保存。");
+
+            showDetail();
+
+        };
+
+
+        reader.readAsDataURL(audioFile);
+
+        return;
+
+    }
+
+
+    saveData();
+
+    alert("修改已保存。");
+
+    showDetail();
+
+}
+
+
+/* =====================================================
+   新增人员
+===================================================== */
+
+function openAddModal() {
+
+    document
+        .getElementById("newName")
+        .value = "";
+
+
+    document
+        .getElementById("newDescription")
+        .value = "";
+
+
+    document
+        .getElementById("addModal")
+        .classList.add("active");
+
+
+    setTimeout(() => {
+
+        document
+            .getElementById("newName")
+            .focus();
+
+    }, 50);
+
+}
+
+
+function closeAddModal() {
+
+    document
+        .getElementById("addModal")
+        .classList.remove("active");
+
+}
+
+
+function createPerson() {
+
+    if (!isAdmin) {
+
+        closeAddModal();
+
+        openPermissionModal();
+
+        return;
+
+    }
+
+
+    const name =
+        document
+            .getElementById("newName")
+            .value
+            .trim();
+
+
+    const description =
+        document
+            .getElementById("newDescription")
+            .value
+            .trim();
+
+
+    if (!name) {
+
+        alert("请填写人员名称。");
+
+        return;
+
+    }
+
+
+    const person = {
+
+        id: Date.now(),
+
+        name: name,
+
+        description: description,
+
+        score: 0,
+
+        image: null,
+
+        audio: null
+
+    };
+
+
+    people.push(person);
+
+    saveData();
+
+    renderPeople();
+
+    closeAddModal();
+
+    openPerson(person.id);
+
+}
+
+
+/* =====================================================
+   删除
+===================================================== */
+
+function openDeleteConfirm() {
+
+    document
+        .getElementById("deleteModal")
+        .classList.add("active");
+
+}
+
+
+function closeDeleteConfirm() {
+
+    document
+        .getElementById("deleteModal")
+        .classList.remove("active");
+
+}
+
+
+function deletePerson() {
+
+    if (!isAdmin) {
+
+        closeDeleteConfirm();
+
+        openPermissionModal();
+
+        return;
+
+    }
+
+
+    people =
+        people.filter(
+            p => p.id !== currentPersonId
+        );
+
+
+    saveData();
+
+
+    currentPersonId = null;
+
+
+    closeDeleteConfirm();
+
+    showList();
+
+}
+
+
+/* =====================================================
+   返回详情
+===================================================== */
+
+function showDetail() {
+
+    if (currentPersonId !== null) {
+
+        openPerson(currentPersonId);
+
+    }
+
+}
+
+
+/* =====================================================
+   管理员密码弹窗
+===================================================== */
+
+function openPasswordModal() {
+
+    document
+        .getElementById("passwordInput")
+        .value = "";
+
+
+    document
+        .getElementById("passwordModal")
+        .classList.add("active");
+
+
+    setTimeout(() => {
+
+        document
+            .getElementById("passwordInput")
+            .focus();
+
+    }, 50);
+
+}
+
+
+function closePasswordModal() {
+
+    document
+        .getElementById("passwordModal")
+        .classList.remove("active");
+
+}
+
+
+/* =====================================================
+   管理员登录
+===================================================== */
+
+function loginAdmin() {
+
+    const password =
+        document
+            .getElementById("passwordInput")
+            .value;
+
+
+    if (password !== ADMIN_PASSWORD) {
+
+        alert("管理员密码错误。");
+
+        return;
+
+    }
+
+
+    isAdmin = true;
+
+
+    closePasswordModal();
+
+    updateAdminStatus();
+
+    renderPeople();
+
+
+    /*
+       如果登录前有操作被拦截，
+       登录成功后可以继续那个操作。
+    */
+
+    if (pendingAdminAction) {
+
+        const action =
+            pendingAdminAction;
+
+        pendingAdminAction = null;
+
+        action();
+
+    }
+
+}
+
+
+/* =====================================================
+   管理员状态
+===================================================== */
+
+function updateAdminStatus() {
+
+    const status =
+        document.getElementById("adminStatus");
+
+
+    if (isAdmin) {
+
+        status.textContent =
+            "管理员模式";
+
+    } else {
+
+        status.textContent = "";
+
+    }
+
+}
+
+
+/* =====================================================
+   隐藏入口
+===================================================== */
+
+let rightClickCount = 0;
+
+let rightTimer = null;
+
+
+/*
+   右下角双击
+*/
+
+document
+    .getElementById("secretRight")
+    .addEventListener(
+        "click",
+        function() {
+
+            rightClickCount++;
+
+
+            clearTimeout(rightTimer);
+
+
+            rightTimer =
+                setTimeout(
+                    () => {
+                        rightClickCount = 0;
+                    },
+                    500
+                );
+
+
+            if (rightClickCount >= 2) {
+
+                rightClickCount = 0;
+
+                /*
+                   右下角双击完成
+                   等待左下角点击
+                */
+
+                window.secretReady = true;
+
+            }
+
+        }
+    );
+
+
+/*
+   左下角单击
+*/
+
+document
+    .getElementById("secretLeft")
+    .addEventListener(
+        "click",
+        function() {
+
+            if (window.secretReady) {
+
+                window.secretReady = false;
+
+                openPasswordModal();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   ESC
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            closeAddModal();
+
+            closePermissionModal();
+
+            closePasswordModal();
+
+            closeDeleteConfirm();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   点击遮罩关闭
+===================================================== */
+
+document
+    .getElementById("addModal")
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (event.target === this) {
+
+                closeAddModal();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
